@@ -1,0 +1,19 @@
+{
+  "name": "Pace",
+  "version": "0.1.0",
+  "authors": [
+    "Arjen Wiersma <arjen@wiersma.org>"
+  ],
+  "description": "Pace Charts",
+  "keywords": [
+    "pace"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.wiersma.org/toys/pace",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
