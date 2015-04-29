@@ -4,3 +4,4 @@
 /.nrepl-port
 /.lein-env
 /figwheel_server.log
+/.lein-repl-history
