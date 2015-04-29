@@ -1,5 +1,6 @@
 (ns todo.core
-    (:require [reagent.core :as reagent :refer [atom]]
+  (:use [jayq.core :only [$ css html]])
+  (:require [reagent.core :as reagent :refer [atom]]
               [reagent.session :as session]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
@@ -15,7 +16,7 @@
 ;; -------------------------
 ;; Views
 
-(defonce pace (atom {:minutes 5 :seconds 25 :paceInMetersPerSecond 3.076923076923077}))
+(defonce pace (atom {:minutes 5 :seconds 35 :paceInMetersPerSecond 3.076923076923077}))
 (defonce calcs (atom 0))
 
 (defn recalculate-chart [minutes seconds]
@@ -26,9 +27,10 @@
     )
   )
 
-(defn pace-input [{:keys [minutes seconds on-save on-stop]}]
+(defn pace-input [{:keys [distance minutes seconds on-save on-stop]}]
   (let [minutes (atom minutes)
         seconds (atom seconds)
+        distance (atom distance)
         stop #(do 
                   (if on-stop (on-stop)))
         save #(let [m (-> @minutes str clojure.string/trim)
@@ -36,23 +38,52 @@
                 (if-not (empty? s) (on-save m s))
                 )]
     (fn [props]
-      [:div
-       [:input {:type "text" :value @minutes :on-blur save
-                :placeholder "minutes"
-                :on-change #(reset! minutes (-> % .-target .-value))
-                :on-key-down #(case (.-which %)
-                                13 (save)
-                                27 (stop)
-                                nil)
-                }]
-       [:input {:type "text" :value @seconds :on-blur save
-                :placeholder "seconds"
-                :on-change #(reset! seconds (-> % .-target .-value))
-                :on-key-down #(case (.-which %)
-                                13 (save)
-                                27 (stop)
-                                nil)
-                }]])))
+      [:div.col-md-10.col-md-offset-1
+       [:form.form-horizontal
+        [:div.form-group
+         [:div.input-group
+          [:input.form-control {:id "i1" :type "text" :value @minutes
+                                ;;                :on-blur save
+                                :on-change #(reset! minutes (-> % .-target .-value))
+                                ;;                :on-key-down #(case (.-which %)
+                                ;;                                13 (save)
+                                ;;                                27 (stop)
+                                ;;                                nil)
+                                :size 1
+                                }]
+          [:div.input-group-addon "minutes"]
+          ]
+         ]
+        [:div.form-group
+         [:div.input-group
+          [:input.form-control {:id "i2" :type "text" :value @seconds
+                                ;;                :on-blur save
+                                :on-change #(reset! seconds (-> % .-target .-value))
+                                ;;                :on-key-down #(case (.-which %)
+                                ;;                                13 (save)
+                                ;;                                27 (stop)
+                                ;;                                nil)
+                                :size 2
+                                }]
+          [:div.input-group-addon "seconds"]
+          ]]
+        [:div.form-group
+         [:div.input-group
+          [:input.form-control {:id "i2" :type "text" :value @distance
+                                ;;                :on-blur save
+                                :placeholder "distance"
+                                :on-change #(reset! distance (-> % .-target .-value))
+                                ;;                :on-key-down #(case (.-which %)
+                                ;;                                13 (save)
+                                ;;                                27 (stop)
+                                ;;                                nil)
+                                :size 2
+                                }]
+          [:div.input-group-addon "distance in km"]
+          ]]
+        [:div.form-group
+         [:input.btn.btn-primary {:type "button" :value "Calculate" :on-click save}]]
+        ]])))
 
 (defn toHMS [timeInSeconds]
   (let [round (.round js/Math timeInSeconds)
@@ -68,13 +99,15 @@
 (defn home-page []
   (let [p (:paceInMetersPerSecond @pace)]
     [:div
+     
      [:div.page-header [:h1 "Pace Chart - Work in Progress...."]]
+     
      [:div.row
       [:div.col-md-6
        [:div.panel.panel-default
         [:div.panel-heading "Set your pace"]
         [:div.panel-body
-         [:div [pace-input {:minutes 5 :seconds 25 :on-save recalculate-chart}]]]]]
+         [:div [pace-input {:minutes 5 :seconds 35 :on-save recalculate-chart}]]]]]
       [:div.col-md-6
        [:div.panel.panel-default
         [:div.panel-heading "Pace in Meters/Second"]

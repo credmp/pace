@@ -19,7 +19,8 @@
                  [compojure "1.3.3"]
                  [selmer "0.8.2"]
                  [environ "1.0.0"]
-                 [secretary "1.2.3"]]
+                 [secretary "1.2.3"]
+                 [jayq "2.5.4"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
@@ -77,9 +78,49 @@
                    :cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]
                                               :compiler {:main "todo.dev"
                                                          :source-map true}}
-}
-}}
+                                        }
+                               }
+                   }
+             
+             :prod { ;; :repl-options {:init-ns todo.repl
+                     ;;                :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                     ;; 
+                     ;; :dependencies [[ring-mock "0.1.5"]
+                     ;;                [ring/ring-devel "1.3.2"]
+                     ;;                [leiningen "2.5.1"]
+                     ;;                [figwheel "0.2.6"]
+                     ;;                [weasel "0.6.0"]
+                     ;;                [com.cemerick/piggieback "0.2.0"]
+                     ;;                [org.clojure/tools.nrepl "0.2.10"]
+                     ;;                [pjstadig/humane-test-output "0.7.0"]]
+                    :hooks [leiningen.cljsbuild minify-assets.plugin/hooks]
+                    
+                    :source-paths ["env/prod/clj"]
+                     ;; :plugins [[lein-figwheel "0.2.5"]]
 
+                     ;; :injections [(require 'pjstadig.humane-test-output)
+                     ;;             (pjstadig.humane-test-output/activate!)]
+
+                     ;; :figwheel {:http-server-root "public"
+                     ;;            :server-port 3449
+                     ;;            :nrepl-port 7888
+                     ;;            :css-dirs ["resources/public/css"]
+                     ;;            :ring-handler todo.handler/app}
+
+                    :env {:dev? false
+                          :production true}
+                    
+                    :aot :all
+                    :omit-source true
+
+                    :cljsbuild {:builds {:app {:source-paths ["env/prod/cljs"]
+                                               :compiler {:optimizations :advanced
+                                                          :pretty-print false
+                                                          }
+                                               }
+                                        }
+                               }
+                   }
              :uberjar {:hooks [leiningen.cljsbuild minify-assets.plugin/hooks]
                        :env {:production true}
                        :aot :all
